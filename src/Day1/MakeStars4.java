@@ -1,6 +1,8 @@
+package Day1;
+
 import java.util.Scanner;
 
-public class MakeStars1 {
+public class MakeStars4 {
 
     public static void main(String[] args){
 
@@ -13,8 +15,12 @@ public class MakeStars1 {
             System.out.println("숫자는 1 이상 100 이하여야 합니다.");
         }else{
             for (int i = 1; i <= num; i++) {
-                for(int j = 1; j <= i; j++){
-                    System.out.print("*");
+                for(int j = 1; j <= num; j++){
+                    if(i>j) {
+                        System.out.print(" ");
+                    }else{
+                        System.out.print("*");
+                    }
                 }
                 System.out.println("");
             }
