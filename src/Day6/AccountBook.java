@@ -12,43 +12,37 @@ public class AccountBook {
 
     public static void main(String[] args){
 
+        AccountBook ab = new AccountBook();
         ArrayList<ArrayList<String>> logArr = new ArrayList<>();
         ArrayList<ArrayList<String>> inpArr = new ArrayList<>();
 
         try {
-            mainMenu(logArr,inpArr);
+            ab.frontMenu(logArr,inpArr);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    public static void mainMenu(ArrayList<ArrayList<String>> logArr, ArrayList<ArrayList<String>> inpArr)throws IOException{
+    public void frontMenu(ArrayList<ArrayList<String>> logArr, ArrayList<ArrayList<String>> inpArr)throws IOException{
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String str;
         boolean flag = true;
 
+
         while(flag){
-            System.out.println("가계부 앱이 실행되었습니다.");
-            System.out.println("원하시는 메뉴를 골라주세요.");
-            System.out.println("1. 로그인 2. 사용자 등록 3. 가계부 등록 4. 삭제 5. 전체자료 출력 6. 월별 자료 출력 7. 종료");
+            System.out.println("가계부 앱이 실행되었습니다. 로그인 후 사용 가능합니다.");
+            System.out.println("원하시는 메뉴에 해당하는 숫자를 입력해주세요.");
+            System.out.println("1. 로그인 2. 사용자 등록 3. 종료");
             str = br.readLine();
 
             switch (str){
-                case "1" :  login(logArr);
+                case "1" :  mainMenu(logArr,inpArr);
                             break;
-                case "2" :  join(inpArr);
+                case "2" :  join(logArr);
                             break;
-                case "3" :  input(inpArr);
-                            break;
-                case "4" :  remove(inpArr);
-                            break;
-                case "5" :  printBook(inpArr);
-                            break;
-                case "6" :  System.out.println("아직 미구현입니다.");
-                            break;
-                case "7" :  System.out.println("앱이 종료됩니다."); flag = false;
+                case "3" :  System.out.println("앱이 종료됩니다."); flag = false; br.close();
                             break;
             }
 
@@ -56,8 +50,42 @@ public class AccountBook {
 
     }
 
+    public void mainMenu(ArrayList<ArrayList<String>> logArr, ArrayList<ArrayList<String>> inpArr) throws IOException{
 
-    public static ArrayList<ArrayList<String>> join(ArrayList<ArrayList<String>> arr) throws IOException{
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        boolean flag = true;
+        String str;
+
+        if(login(logArr)){
+            while (flag) {
+                System.out.println("가계부 앱이 실행되었습니다.");
+                System.out.println("원하시는 메뉴에 해당하는 숫자를 입력해주세요.");
+                System.out.println("1. 가계부 등록 2. 삭제 3. 전체자료 출력 4. 월별 자료 출력 5. 로그아웃");
+                str = br.readLine();
+                switch (str) {
+                    case "1":
+                        input(inpArr);
+                        break;
+                    case "2":
+                        remove(inpArr);
+                        break;
+                    case "3":
+                        printBook(inpArr);
+                        break;
+                    case "4":
+                        System.out.println("아직 미구현입니다.");
+                        break;
+                    case "5":
+                        System.out.println("로그아웃됩니다.");
+                        flag = false;
+                        break;
+                }
+            }
+        }
+    }
+
+
+    public void join(ArrayList<ArrayList<String>> logArr) throws IOException{
 
         ArrayList<String> personal = new ArrayList<>();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -65,50 +93,72 @@ public class AccountBook {
         System.out.println("사용자 등록");
         System.out.println("ID를 입력해주십시오.");
         String id = br.readLine();
-        System.out.println("비밀번호를 입력해주십시오.");
-        String pw = br.readLine();
 
-        for(int i = 0; i < arr.size(); i++){
-            if(id.isBlank()) {
-                System.out.println("공백은 입력할 수 없습니다.");
-            }else if(id.equals(arr.get(i).get(0))){
-                System.out.println("이미 존재하는 id입니다.");
-            }else if(!id.equals(arr.get(i).get(0))){
-                personal.add(id);
-                personal.add(pw);
-                arr.add(personal);
+        if(id.isBlank()) {
+            System.out.println("공백은 입력할 수 없습니다.");
+        }else if(!id.isBlank()) {
+            if (logArr.size() != 0) {
+                for (int i = 0; i < logArr.size(); i++) {
+                    if (id.equals(logArr.get(i).get(0)));{
+                        System.out.println("이미 존재하는 ID입니다.");
+                    }
+                }
+            } else if (logArr.size() == 0) {
+                System.out.println("비밀번호를 입력해주십시오.");
+                String pw = br.readLine();
+                if (pw.isBlank()) {
+                    System.out.println("공백은 입력할 수 없습니다.");
+                } else if (!pw.isBlank()) {
+                    personal.add(id);
+                    personal.add(pw);
+                    logArr.add(personal);
+                    System.out.println("가입이 완료되었습니다, " + id + "님.");
+                }
             }
+
         }
 
-        return arr;
+
     }
 
-    public static boolean login(ArrayList<ArrayList<String>> arr) throws IOException{
+    public boolean login(ArrayList<ArrayList<String>> logArr) throws IOException{
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        boolean bl = false;
+        boolean flag = false;
 
         System.out.println("LOGIN");
         System.out.println("ID를 입력해주십시오.");
         String id = br.readLine();
-        System.out.println("비밀번호를 입력해주십시오.");
-        String pw = br.readLine();
+            if(id.isBlank()){
+                System.out.println("공백은 입력할 수 없습니다.");
+            }else if(!id.isBlank()){
+                System.out.println("비밀번호를 입력해주십시오.");
+                String pw = br.readLine();
+                    if (pw.isBlank()){
+                        System.out.println("공백은 입력할 수 없습니다.");
+                    }else if (!pw.isBlank()){
+                        if(logArr.size() == 0){
+                            System.out.println("정보가 존재하지 않습니다.");
+                        }else if (logArr.size() != 0){
+                            for (int i = 0; i < logArr.size(); i++) {
+                                if (!logArr.get(i).get(0).equals(id)) {
+                                    System.out.println("등록되지 않은 ID입니다.");
+                                } else if (logArr.get(i).get(0).equals(id) && !logArr.get(i).get(1).equals(pw)) {
+                                    System.out.println("비밀번호가 일치하지 않습니다.");
+                                } else if (logArr.get(i).get(0).equals(id) && logArr.get(i).get(1).equals(pw)) {
+                                    System.out.println("로그인 성공했습니다. 환영합니다, " + id + "님.");
+                                    flag = true;
+                                }
+                            }
+                        }
+                    }
 
-        for(int i = 0; i < arr.size(); i++){
-            if(arr.get(i).get(0).equals(id) && arr.get(i).get(1).equals(pw)){
-                System.out.println("로그인 성공했습니다.");
-                bl = true;
-            }else if(!arr.get(i).get(0).equals(id)){
-                System.out.println("정보가 존재하지 않습니다.");
-            }else if(arr.get(i).get(0).equals(id) && !arr.get(i).get(1).equals(pw)) {
-                System.out.println("비밀번호가 일치하지 않습니다.");
             }
-        }
 
-        return bl;
+        return flag;
     }
 
-    public static ArrayList<ArrayList<String>> input(ArrayList<ArrayList<String>> inpArr) throws IOException {
+    public void input(ArrayList<ArrayList<String>> inpArr) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         ArrayList<String> arr = new ArrayList<>();
@@ -134,10 +184,11 @@ public class AccountBook {
         arr.add(outcome);
         inpArr.add(arr);
 
-        return inpArr;
+        System.out.println("자료 입력을 완료했습니다.");
+
     }
 
-    public static void remove(ArrayList<ArrayList<String>> arr) throws IOException{
+    public void remove(ArrayList<ArrayList<String>> arr) throws IOException{
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("삭제할 자료 번호를 입력하십시오.");
@@ -158,7 +209,7 @@ public class AccountBook {
 
     }
 
-    public static void print(ArrayList<ArrayList<String>> arr) throws IOException{
+    public void print(ArrayList<ArrayList<String>> arr) throws IOException{
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
@@ -180,7 +231,7 @@ public class AccountBook {
 
     }
 
-    public static void printBook(ArrayList<ArrayList<String>> arr){
+    public void printBook(ArrayList<ArrayList<String>> arr){
 
         if(arr.size() == 0){
             System.out.println("등록된 자료가 없습니다.");
