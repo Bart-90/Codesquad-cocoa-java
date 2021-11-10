@@ -7,9 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.GZIPInputStream;
+
 
 public class FileWrite {
 
@@ -43,7 +41,7 @@ public class FileWrite {
     public void fileRead() throws IOException {
 
 
-        String directory = "c:\\AccountBook\\text1.txt";  
+        String directory = "c:\\AccountBook\\text1.txt";  //파일 경로
         BufferedReader br = Files.newBufferedReader(Paths.get(directory), Charset.forName("MS949"));
 
         while(true){
@@ -51,6 +49,8 @@ public class FileWrite {
             System.out.println(line);
             if(line == null) break;
         }
+
+        br.close();
 
     }
 
