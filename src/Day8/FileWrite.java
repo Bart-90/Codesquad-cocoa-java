@@ -1,11 +1,14 @@
 package Day8;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 public class FileWrite {
@@ -14,12 +17,14 @@ public class FileWrite {
         FileWrite fw = new FileWrite();
         try {
             fw.fileWrite();
+            fw.fileRead();
         } catch (Exception e){
             e.printStackTrace();
         }
 
     }
 
+    //파일 작성하는 메소드
     public void fileWrite() throws IOException {
 
         String directory = "c:\\AccountBook\\test1.txt";  //파일 경로.
@@ -32,6 +37,21 @@ public class FileWrite {
 
         bw.flush();    // bw객체 청소
         bw.close();    // bw객체 종료
+    }
+
+    //파일 읽어오는 메소드
+    public void fileRead() throws IOException {
+
+
+        String directory = "c:\\AccountBook\\text1.txt";  
+        BufferedReader br = Files.newBufferedReader(Paths.get(directory), Charset.forName("MS949"));
+
+        while(true){
+            String line = br.readLine();
+            System.out.println(line);
+            if(line == null) break;
+        }
+
     }
 
 }
