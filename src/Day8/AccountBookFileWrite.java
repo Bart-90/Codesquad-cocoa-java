@@ -1,36 +1,36 @@
-package Day6;
+package Day8;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
-public class AccountBook {
+public class AccountBookFileWrite {
 
     public static void main(String[] args){
 
-        AccountBook ab = new AccountBook();
-        List<List<String>> loginArr = new ArrayList<>();
-        List<List<String>> dataArr = new ArrayList<>();
+        AccountBookFileWrite abfw = new AccountBookFileWrite();
 
         try {
-            ab.frontMenu(loginArr,dataArr);
+            abfw.frontMenu();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    public void frontMenu(List<List<String>> loginArr, List<List<String>> dataArr)throws IOException{
+    public void frontMenu()throws IOException{
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String str;
+        String str = "";
         boolean flag = true;
 
 
@@ -38,16 +38,19 @@ public class AccountBook {
 
             System.out.println("가계부 앱이 실행되었습니다. 로그인 후 사용 가능합니다.");
             System.out.println("원하시는 메뉴에 해당하는 숫자를 입력해주세요.");
-            System.out.println("1. 로그인 2. 사용자 등록 3. 종료 4. logRead 5. fileRead");
-            str = br.readLine();
+            System.out.println("1. 로그인 2. 사용자 등록 3. 종료 4. 사용자 정보 불러오기");
+            try {
+                str = br.readLine();
+            }catch (Exception e){
+                System.out.println("숫자를 제대로 입력해 주십시오.");
+            }
 
             switch (str) {
                 case "1":
-                    mainMenu(loginArr, dataArr);
+                    mainMenu(loginRead(),dataRead());
                     break;
                 case "2":
-                    loginWrite(loginArr);
-                    join();
+                    loginWrite(join(loginRead()));
                     break;
                 case "3":
                     System.out.println("앱이 종료됩니다.");
@@ -55,10 +58,7 @@ public class AccountBook {
                     br.close();
                     break;
                 case "4":
-                    loginRead(loginArr);
-                    break;
-                case "5":
-                    fileRead(dataArr);
+                    loginRead();
                     break;
             }
 
@@ -76,25 +76,18 @@ public class AccountBook {
             while (flag) {
                 System.out.println("가계부 앱이 실행되었습니다.");
                 System.out.println("원하시는 메뉴에 해당하는 숫자를 입력해주세요.");
-                System.out.println("1. 가계부 등록 2. 삭제 3. 전체자료 출력 4. 월별 자료 출력 5. 자료 저장 6. 로그아웃");
+                System.out.println("1. 가계부 등록 2. 전체자료 출력 3. 월별 자료 출력 4. 로그아웃");
                 str = br.readLine();
                 switch (str) {
                     case "1":
-                        input(dataArr);
+                        dataWrite(input(dataRead()));
                         break;
                     case "2":
-                        remove(dataArr);
+                        printBook(dataRead());
                         break;
                     case "3":
-                        printBook(dataArr);
-                        break;
-                    case "4":
                         System.out.println("아직 미구현입니다.");
-                        break;
-                    case "5":
-                        fileWrite(dataArr);
-                        break;
-                    case "6":
+                    case "4":
                         System.out.println("로그아웃됩니다.");
                         flag = false;
                         break;
@@ -104,9 +97,8 @@ public class AccountBook {
     }
 
 
-    public List<List<String>> join() throws IOException {
+    public List<String> join(List<List<String>> loginArr) throws IOException {
 
-        List<List<String>> loginArr = new ArrayList<>();
         List<String> personal = new ArrayList<>();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -128,15 +120,14 @@ public class AccountBook {
             if (pw.isBlank()) {
                 System.out.println("공백은 입력할 수 없습니다.");
             } else if (!pw.isBlank()) {
+                System.out.println("가입이 완료되었습니다, " + id + "님.");
                 personal.add(id);
                 personal.add(pw);
-                loginArr.add(personal);
-                System.out.println("가입이 완료되었습니다, " + id + "님.");
             }
 
         }
 
-        return loginArr;
+        return personal;
     }
 
 
@@ -146,42 +137,44 @@ public class AccountBook {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         boolean flag = false;
+        String msg = "";
 
         System.out.println("LOGIN");
         System.out.println("ID를 입력해주십시오.");
         String id = br.readLine();
-            if(id.isBlank()){
+        if(id.isBlank()){
+            System.out.println("공백은 입력할 수 없습니다.");
+        }else if(!id.isBlank()){
+            System.out.println("비밀번호를 입력해주십시오.");
+            String pw = br.readLine();
+            if (pw.isBlank()){
                 System.out.println("공백은 입력할 수 없습니다.");
-            }else if(!id.isBlank()){
-                System.out.println("비밀번호를 입력해주십시오.");
-                String pw = br.readLine();
-                    if (pw.isBlank()){
-                        System.out.println("공백은 입력할 수 없습니다.");
-                    }else if (!pw.isBlank()){
-                        if(loginArr.size() == 0){
-                            System.out.println("정보가 존재하지 않습니다.");
-                        }else if (loginArr.size() != 0){
-                            for (int i = 0; i < loginArr.size(); i++) {
-                                if (!loginArr.get(i).get(0).equals(id)) {
-                                    System.out.println("등록되지 않은 ID입니다.");
-                                } else if (loginArr.get(i).get(0).equals(id) && !loginArr.get(i).get(1).equals(pw)) {
-                                    System.out.println("비밀번호가 일치하지 않습니다.");
-                                } else if (loginArr.get(i).get(0).equals(id) && loginArr.get(i).get(1).equals(pw)) {
-                                    System.out.println("로그인 성공했습니다. 환영합니다, " + id + "님.");
-                                    flag = true;
-                                }
-                            }
+            }else if (!pw.isBlank()){
+                if(loginArr.size() == 0){
+                    System.out.println("정보가 존재하지 않습니다.");
+                }else if (loginArr.size() != 0){
+                    for (int i = 0; i < loginArr.size(); i++) {
+                        if (loginArr.get(i).get(0).equals(id) && loginArr.get(i).get(1).equals(pw)) {
+                            msg = "로그인 성공했습니다. 환영합니다, " + id + "님.";
+                            flag = true;
+                        }else if (loginArr.get(i).get(0).equals(id) && !loginArr.get(i).get(1).equals(pw)) {
+                                msg = "비밀번호가 일치하지 않습니다.";
+                        }else if (!loginArr.get(i).get(0).equals(id)) {
+                            msg = "등록되지 않은 ID입니다.";
                         }
                     }
-
+                }
             }
 
+        }
+
+        System.out.println(msg);
         return flag;
     }
 
 
 
-    public void input(List<List<String>> dataArr) throws IOException {
+    public List<String> input(List<List<String>> dataArr) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         List<String> arr = new ArrayList<>();
@@ -205,36 +198,36 @@ public class AccountBook {
         arr.add(memo);
         arr.add(income);
         arr.add(outcome);
-        dataArr.add(arr);
 
         System.out.println("자료 입력을 완료했습니다.");
 
+        return arr;
     }
 
-    public void loginWrite(List<List<String>> loginArr) throws IOException {
+    public void loginWrite(List<String> loginArr) throws IOException {
 
         String directory = "c:\\AccountBook\\register.csv";
 
         BufferedWriter bw = Files.newBufferedWriter(Paths.get(directory), Charset.forName("MS949"), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
-        for (int i = 0; i < loginArr.size(); i++) {
-            for (int j = 0; j < loginArr.get(i).size(); j++) {
-                bw.write(loginArr.get(i).get(j)+",");
-                if(j == loginArr.get(i).size()){
-                    bw.newLine();
-                }
+        for(int i = 0; i < loginArr.size(); i++){
+            bw.write(loginArr.get(i));
+            if(i<loginArr.size()-1){
+                bw.write(",");
             }
         }
+        bw.newLine();
 
         bw.flush();
         bw.close();
 
     }
 
-    public void loginRead(List<List<String>> loginArr) throws IOException {
+    public List<List<String>> loginRead() throws IOException {
 
+        List<List<String>> arrs = new ArrayList<>();
         List<String> arr = new ArrayList<>();
-        List<String> personal = new ArrayList<>();
+        List<String> personal;
         String directory = "c:\\AccountBook\\register.csv";
         ArrayList<String> pi = new ArrayList<>();
         BufferedReader br = Files.newBufferedReader(Paths.get(directory), Charset.forName("MS949"));
@@ -245,56 +238,59 @@ public class AccountBook {
             if(line == null) break;
         }
 
-        /*for(int i = 0; i < arr.size(); i++){
-               String[] temp = arr.get(i).split(",");
-               for(int j = 0; j< temp.length; j++) {
-                   personal.add(temp[j]);
-               }
-            loginArr.add(personal);
-        }*/
+        for(int i = 0; i < arr.size()-1; i++){
+            personal = Arrays.asList(arr.get(i).split(","));
+            arrs.add(personal);
+        }
 
 
-
-        System.out.println(arr);
-       //System.out.println(loginArr);
-
-
+        return arrs;
     }
 
-    public void fileWrite(List<List<String>> dataArr) throws IOException {
+    public void dataWrite(List<String> dataArr) throws IOException {
 
 
         String directory = "c:\\AccountBook\\accountbook.csv";
 
         BufferedWriter bw = Files.newBufferedWriter(Paths.get(directory), Charset.forName("MS949"), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
-        for (int i = 0; i < dataArr.size(); i++) {
-            for (int j = 0; j < dataArr.get(i).size(); j++) {
-                bw.write(dataArr.get(i).get(j) + ",");
-                if(j == dataArr.get(i).size()-1){
-                    bw.newLine();
-                }
+        for(int i = 0; i < dataArr.size(); i++){
+            bw.write(dataArr.get(i));
+            if(i<dataArr.size()-1){
+                bw.write(",");
             }
         }
+        bw.newLine();
 
         bw.flush();
         bw.close();
 
         System.out.println("저장이 완료되었습니다.");
+
     }
 
-    public void fileRead(List<List<String>> dataArr) throws IOException {
+    public List<List<String>> dataRead() throws IOException {
 
+        List<List<String>> arrs = new ArrayList<>();
+        List<String> arr = new ArrayList<>();
+        List<String> personal;
         String directory = "c:\\AccountBook\\accountbook.csv";
         ArrayList<String> pi = new ArrayList<>();
         BufferedReader br = Files.newBufferedReader(Paths.get(directory), Charset.forName("MS949"));
 
-        while (true){
+        while(true){
             String line = br.readLine();
+            arr.add(line);
             if(line == null) break;
-            System.out.println(line);
         }
 
+        for(int i = 0; i < arr.size()-1; i++){
+            personal = Arrays.asList(arr.get(i).split(","));
+            arrs.add(personal);
+        }
+
+
+        return arrs;
     }
 
     public void remove(List<List<String>> arr) throws IOException{
@@ -322,18 +318,19 @@ public class AccountBook {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = new Date();
-        Date date1;
+        LocalDate date;
+;
 
-        for(int i = 0; i < arr.size(); i++){
-            try {
-                date = sdf.parse(arr.get(i).get(1));
-                System.out.println(sdf1.format(date));
 
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
+//        for(int i = 0; i < arr.size(); i++){
+//            try {
+//                date = sdf.parse(arr.get(i).get(1));
+//                System.out.println(sdf1.format(date));
+//
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
     }
 

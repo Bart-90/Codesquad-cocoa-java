@@ -7,6 +7,8 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FileWrite {
@@ -14,7 +16,7 @@ public class FileWrite {
     public static void main(String[] args) {
         FileWrite fw = new FileWrite();
         try {
-            fw.fileWrite();
+            //fw.fileWrite();
             fw.fileRead();
         } catch (Exception e){
             e.printStackTrace();
@@ -41,14 +43,17 @@ public class FileWrite {
     public void fileRead() throws IOException {
 
 
-        String directory = "c:\\AccountBook\\text1.txt";  //파일 경로
+        String directory = "c:\\AccountBook\\test.csv";  //파일 경로
         BufferedReader br = Files.newBufferedReader(Paths.get(directory), Charset.forName("MS949"));
+        List<String> arr = new ArrayList<>();
 
         while(true){
             String line = br.readLine();
-            System.out.println(line);
+            arr.add(line);
             if(line == null) break;
         }
+
+
 
         br.close();
 
