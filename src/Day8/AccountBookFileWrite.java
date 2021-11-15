@@ -75,7 +75,7 @@ public class AccountBookFileWrite {
                 makeDataFile();
                 System.out.println("가계부 앱이 실행되었습니다.");
                 System.out.println("원하시는 메뉴에 해당하는 숫자를 입력해주세요.");
-                System.out.println("1. 가계부 등록 2. 전체자료 출력 3. 월별 자료 출력 4. 검색 5. 로그아웃");
+                System.out.println("1. 가계부 등록 2. 전체자료 출력 3. 월별 자료 출력 4. 통합검색 5. 유형별 검색 6. 정렬 7. 로그아웃");
                 str = br.readLine();
                 switch (str) {
                     case "1":
@@ -91,6 +91,12 @@ public class AccountBookFileWrite {
                         searchData(dataRead());
                         break;
                     case "5":
+                        searchCategoryData(dataRead());
+                        break;
+                    case "6":
+                        sortArray(dataRead());
+                        break;
+                    case "7":
                         System.out.println("로그아웃됩니다.");
                         flag = false;
                         break;
@@ -157,13 +163,13 @@ public class AccountBookFileWrite {
                     System.out.println("정보가 존재하지 않습니다.");
                 }else if (loginArr.size() != 0){
                     for (int i = 0; i < loginArr.size(); i++) {
-                        if (loginArr.get(i).get(0).equals(id) && loginArr.get(i).get(1).equals(pw)) {
+                        if (!loginArr.get(i).get(0).equals(id)) {
+                            msg = "등록되지 않은 ID입니다.";
+                        }else if (loginArr.get(i).get(0).equals(id) && !loginArr.get(i).get(1).equals(pw)) {
+                            msg = "비밀번호가 일치하지 않습니다.";
+                        }else if (loginArr.get(i).get(0).equals(id) && loginArr.get(i).get(1).equals(pw)) {
                             msg = "로그인 성공했습니다. 환영합니다, " + id + "님.";
                             flag = true;
-                        }else if (loginArr.get(i).get(0).equals(id) && !loginArr.get(i).get(1).equals(pw)) {
-                                msg = "비밀번호가 일치하지 않습니다.";
-                        }else if (!loginArr.get(i).get(0).equals(id)) {
-                            msg = "등록되지 않은 ID입니다.";
                         }
                     }
                 }
@@ -264,6 +270,19 @@ public class AccountBookFileWrite {
         return arrs;
     }
 
+    public void makeDataFile() throws IOException {
+
+
+        String directory = "c:\\AccountBook\\accountbook.csv";
+
+        BufferedWriter bw = Files.newBufferedWriter(Paths.get(directory), Charset.forName("MS949"), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+
+        bw.flush();
+        bw.close();
+
+
+    }
+
     public void dataWrite(List<String> dataArr) throws IOException {
 
 
@@ -286,18 +305,6 @@ public class AccountBookFileWrite {
 
     }
 
-    public void makeDataFile() throws IOException {
-
-
-        String directory = "c:\\AccountBook\\accountbook.csv";
-
-        BufferedWriter bw = Files.newBufferedWriter(Paths.get(directory), Charset.forName("MS949"), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-
-        bw.flush();
-        bw.close();
-
-
-    }
 
     public List<List<String>> dataRead() throws IOException{
 
@@ -323,73 +330,7 @@ public class AccountBookFileWrite {
         return arrs;
     }
 
-    public void remove(List<List<String>> arr) throws IOException{
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("삭제할 자료 번호를 입력하십시오.");
-        String num = br.readLine();
-
-        if(arr.size() == 0) {
-            System.out.println("삭제 가능한 자료가 존재하지 않습니다.");
-        }else if(arr.size() != 0) {
-            for (int i = 0; i < arr.size(); i++) {
-                if (arr.get(i).get(0).equals(num)) {
-                    arr.remove(Integer.parseInt(num) - 1);
-                    System.out.println(num + "번 자료가 삭제되었습니다.");
-                } else if (!arr.get(i).get(0).equals(num)) {
-                    System.out.println("해당 자료가 존재하지 않습니다.");
-                }
-            }
-        }
-
-    }
-
-    public void printMonth(List<List<String>> arr) throws IOException{
-
-        String[] months = {"JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"};
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("확인하실 월을 입력해 주십시오.");
-        int num = br.read();
-        String msg = "";
-        
-
-        for (int i = 0; i < arr.size(); i++){
-            if (num == LocalDate.parse(arr.get(i).get(1)).getMonthValue()){
-                System.out.println("일치하는 달은 " + LocalDate.parse(arr.get(i).get(1)).getMonthValue() + "월입니다.");
-            }else if(num != LocalDate.parse(arr.get(i).get(1)).getMonthValue()){
-                msg = "일치하지 않습니다.";
-            }
-        }
-
-        System.out.println(msg);
-
-//        if(arr.size() == 0){
-//            System.out.println("등록된 자료가 없습니다.");
-//        }else if(arr.size() != 0){
-//
-//            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//            System.out.println("확인하실 월을 입력해 주십시오.");
-//            int num = br.read();
-//            String msg = "";
-//
-//            for(int i = 0; i < arr.size(); i++){
-//                if (num == LocalDate.parse(arr.get(i).get(1)).getMonthValue()){
-//                    System.out.println(num + "월 자료를 출력합니다.");
-//                    System.out.println("순번       날짜          적요           수입           지출          지출수단");
-//                    System.out.println("------------------------------------------------------------------------");
-//                    for(int j = 0; j < arr.size(); j++){
-//                        System.out.print(arr.get(i).get(0)+ "     " + arr.get(i).get(1) + "       " + arr.get(i).get(2) + "         " + arr.get(i).get(3) + "          " + arr.get(i).get(4) + "          " + arr.get(i).get(5) + "\n");
-//                    }
-//                }else if(num != LocalDate.parse(arr.get(i).get(1)).getMonthValue()){
-//                    msg = "해당하는 월의 자료가 없습니다.";
-//                }
-//            }
-//
-//            System.out.println(msg);
-//        }
-
-    }
 
     public void searchData(List<List<String>> arr) throws IOException {
 
@@ -398,6 +339,7 @@ public class AccountBookFileWrite {
         String str = br.readLine();
         String msg = "";
 
+        System.out.println("검색어 : " + str);
         System.out.println("순번       날짜          적요           수입           지출          지출수단");
         System.out.println("------------------------------------------------------------------------");
 
@@ -414,6 +356,64 @@ public class AccountBookFileWrite {
         System.out.println(msg);
     }
 
+    public void searchCategoryData(List<List<String>> arr) throws IOException{
+
+        String[] categories = {"순번", "날짜", "적요", "수입", "지출", "지출수단"};
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        System.out.println("1. 순번 2. 날짜 3. 적요 4. 수입 5. 지출 6. 지출수단");
+        System.out.println("검색하실 유형의 번호를 입력해 주십시오.");
+
+        int category = Integer.parseInt(br.readLine());
+
+        System.out.println(categories[category-1]+ "에서 검색하실 단어를 입력해 주십시오.");
+
+        String keyword = br.readLine();
+        String msg = "";
+
+        if(category > 6 || category < 0) {
+            System.out.println("올바른 입력 범위가 아닙니다.");
+        }else if (category > 0 && category < 7){
+            System.out.println("유형 : " + categories[category-1] + ", 검색어 : " + keyword);
+            System.out.println("순번       날짜          적요           수입           지출          지출수단");
+            System.out.println("------------------------------------------------------------------------");
+            for (int i = 0; i < arr.size(); i++){
+                if(arr.get(i).get(category-1).equals(keyword)) {
+                    System.out.println(arr.get(i).get(0) + "     " + arr.get(i).get(1) + "       " + arr.get(i).get(2) + "         " + arr.get(i).get(3) + "          " + arr.get(i).get(4) + "          " + arr.get(i).get(5));
+                }else if(!arr.get(i).get(category-1).equals(keyword)){
+                    msg = "해당하는 자료가 없습니다.";
+                }
+            }
+            System.out.println(msg);
+        }
+
+    }
+
+    public void printMonth(List<List<String>> arr) throws IOException{
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("확인하실 월을 입력해 주십시오.");
+        int num = Integer.parseInt(br.readLine());
+        String msg = "";
+
+        if(arr.size() == 0){
+            System.out.println("등록된 자료가 없습니다.");
+        }else if(arr.size() != 0){
+            System.out.println("순번       날짜          적요           수입           지출          지출수단");
+            System.out.println("------------------------------------------------------------------------");
+            for(int i = 0; i < arr.size(); i++){
+                if (num == LocalDate.parse(arr.get(i).get(1)).getMonthValue()){
+                    System.out.print(arr.get(i).get(0)+ "     " + arr.get(i).get(1) + "       " + arr.get(i).get(2) + "         " + arr.get(i).get(3) + "          " + arr.get(i).get(4) + "          " + arr.get(i).get(5) + "\n");
+                }else if(num != LocalDate.parse(arr.get(i).get(1)).getMonthValue()){
+                    msg = "해당하는 월의 자료가 없습니다.";
+                }
+            }
+
+            System.out.println(msg);
+        }
+
+    }
+
     public void printBook(List<List<String>> arr){
 
         if(arr.size() == 0){
@@ -426,7 +426,11 @@ public class AccountBookFileWrite {
             }
         }
 
+    }
 
+    public void sortArray(List<List<String>> arr) throws IOException {
+
+        System.out.println("미구현 기능입니다 ㅠㅠ");
     }
 
 }
