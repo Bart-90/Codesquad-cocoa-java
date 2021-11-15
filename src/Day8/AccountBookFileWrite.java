@@ -231,7 +231,7 @@ public class AccountBookFileWrite {
 
         String directory = "c:\\AccountBook\\register.csv";
 
-        BufferedWriter bw = Files.newBufferedWriter(Paths.get(directory), Charset.forName("MS949"), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        BufferedWriter bw = Files.newBufferedWriter(Paths.get(directory), Charset.forName(""), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
         for(int i = 0; i < loginArr.size(); i++){
             bw.write(loginArr.get(i));
