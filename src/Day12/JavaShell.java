@@ -61,6 +61,7 @@ public class JavaShell {
     }
 
     public void showPath() {
+        System.out.println(System.getProperty("user.home"));
     }
 
     private void openFile(String str) throws IOException{
