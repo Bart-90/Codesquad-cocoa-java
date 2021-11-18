@@ -1,8 +1,7 @@
 package Day13;
 
-public class HanHours {
+public enum HanHours {
 
-    enum Hour{
         HAN("한",1,0, 0),
         DO("두",2,0, 1),
         SE("세",3,0, 2),
@@ -28,7 +27,7 @@ public class HanHours {
         private int firstIndex;
         private int lastIndex;
 
-        private Hour(String hanHour, int hour, int firstIndex, int lastIndex){
+        private HanHours(String hanHour, int hour, int firstIndex, int lastIndex){
             this.hanHour = hanHour;
             this.hour = hour;
             this.firstIndex = firstIndex;
@@ -50,6 +49,6 @@ public class HanHours {
         public int getLastIndex() {
             return lastIndex;
         }
-    }
+
 
 }

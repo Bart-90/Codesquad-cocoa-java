@@ -27,7 +27,7 @@ public class HangeulClock {
         LocalTime otherTime = localTime.withMinute(10);
         int hour12 = localTime.get(ChronoField.CLOCK_HOUR_OF_AMPM);
         int hour24 = localTime.get(ChronoField.CLOCK_HOUR_OF_DAY);
-        int minute = otherTime.getMinute();
+        int minute = localTime.getMinute();
 
         showHours(str,hour24,hour12,minute);
         showMinutes(str,hour24,hour12,minute);
@@ -43,63 +43,22 @@ public class HangeulClock {
 
     public void showHours(String[][] str, int hour24, int hour12, int minute){
 
+    HanHours[] hanHours = HanHours.values();
+
+    if(hour24 == 12 && minute == 0){
+            str[4][0] = ANSI_BLUE + "정" + ANSI_RESET;
+            str[5][0] = ANSI_BLUE + "오" + ANSI_RESET;
+    }else if(hour24 == 24 && minute == 0) {
+            str[3][0] = ANSI_BLUE + "자" + ANSI_RESET;
+            str[4][0] = ANSI_BLUE + "정" + ANSI_RESET;
+    }
+    for(int i = 0; i < hanHours.length; i++) {
+        if (hanHours[i].getHour() == hour12) {
+            str[hanHours[i].getFirstIndex()][hanHours[i].getLastIndex()] = ANSI_BLUE + hanHours[i].getHanHour() + ANSI_RESET;
+        }
+    }
 
 
-
-//        if(hour24 == 12 && minute == 0){
-//            str[4][0] = ANSI_BLUE + "정" + ANSI_RESET;
-//            str[5][0] = ANSI_BLUE + "오" + ANSI_RESET;
-//        }else if(hour24 == 24 && minute == 0) {
-//            str[3][0] = ANSI_BLUE + "자" + ANSI_RESET;
-//            str[4][0] = ANSI_BLUE + "정" + ANSI_RESET;
-//        }else {
-//            switch (hour12) {
-//                case 1:
-//                    str[0][0] = ANSI_BLUE + "한" + ANSI_RESET;
-//                    break;
-//                case 2:
-//                    str[0][1] = ANSI_BLUE + "두" + ANSI_RESET;
-//                    break;
-//                case 3:
-//                    str[0][2] = ANSI_BLUE + "세" + ANSI_RESET;
-//                    break;
-//                case 4:
-//                    str[0][3] = ANSI_BLUE + "네" + ANSI_RESET;
-//                    break;
-//                case 5:
-//                    str[0][4] = ANSI_BLUE + "다";
-//                    str[0][5] = "섯" + ANSI_RESET;
-//                    break;
-//                case 6:
-//                    str[1][0] = ANSI_BLUE + "여";
-//                    str[1][1] = "섯" + ANSI_RESET;
-//                    break;
-//                case 7:
-//                    str[1][2] = ANSI_BLUE + "일";
-//                    str[1][3] = "곱" + ANSI_RESET;
-//                    break;
-//                case 8:
-//                    str[1][4] = ANSI_BLUE + "여";
-//                    str[1][5] = "덟" + ANSI_RESET;
-//                    break;
-//                case 9:
-//                    str[2][0] = ANSI_BLUE + "아";
-//                    str[2][1] = "홉" + ANSI_RESET;
-//                    break;
-//                case 10:
-//                    str[2][2] = ANSI_BLUE + "열" + ANSI_RESET;
-//                    break;
-//                case 11:
-//                    str[2][2] = ANSI_BLUE + "열";
-//                    str[2][3] = "한" + ANSI_RESET;
-//                    break;
-//                case 12:
-//                    str[2][2] = ANSI_BLUE + "열" + ANSI_RESET;
-//                    str[2][4] = ANSI_BLUE + "두" + ANSI_RESET;
-//                    break;
-//            }
-//            str[2][5] = ANSI_BLUE + "시" + ANSI_RESET;
-//        }
     }
     
     public void showMinutes(String[][] str, int hour24, int hour12, int minute){
