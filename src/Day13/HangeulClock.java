@@ -24,13 +24,14 @@ public class HangeulClock {
                           {"오","오","칠","팔","구","분"}};
 
         LocalTime localTime = LocalTime.now();
-        LocalTime otherTime = localTime.withMinute(10);
+        LocalTime setHour = localTime.withHour(12);
+        LocalTime setMinutes = localTime.withMinute(0);
         int hour12 = localTime.get(ChronoField.CLOCK_HOUR_OF_AMPM);
         int hour24 = localTime.get(ChronoField.CLOCK_HOUR_OF_DAY);
         int minute = localTime.getMinute();
 
         showHours(str,hour24,hour12,minute);
-        showMinutes(str,hour24,hour12,minute);
+        showMinutes(str,minute);
 
         for(int i = 0; i < str.length; i++){
             for(int j = 0; j < str[i].length; j++){
@@ -51,23 +52,26 @@ public class HangeulClock {
     }else if(hour24 == 24 && minute == 0) {
             str[3][0] = ANSI_BLUE + "자" + ANSI_RESET;
             str[4][0] = ANSI_BLUE + "정" + ANSI_RESET;
-    }
-    for(int i = 0; i < hanHours.length; i++) {
-        if (hanHours[i].getHour() == hour12) {
-            str[hanHours[i].getFirstIndex()][hanHours[i].getLastIndex()] = ANSI_BLUE + hanHours[i].getHanHour() + ANSI_RESET;
+    }else{
+        for(int i = 0; i < hanHours.length; i++) {
+            if (hanHours[i].getHour() == hour12) {
+                str[hanHours[i].getFirstIndex()][hanHours[i].getLastIndex()] = ANSI_BLUE + hanHours[i].getHanHour() + ANSI_RESET;
+            }
         }
+        str[2][5] = ANSI_BLUE + "시" + ANSI_RESET;
     }
+
 
 
     }
     
-    public void showMinutes(String[][] str, int hour24, int hour12, int minute){
+    public void showMinutes(String[][] str, int minute){
 
         HanMinutes[] hanMinutes = HanMinutes.values();
 
-        if(minute <= 10) {
-            str[hanMinutes[minute-1].getFirst()][hanMinutes[minute-1].getLast()] = ANSI_BLUE + hanMinutes[minute-1].getName() + ANSI_RESET;
-        }
+//        if(minute <= 10) {
+//            str[hanMinutes[minute-1].getFirst()][hanMinutes[minute-1].getLast()] = ANSI_BLUE + hanMinutes[minute-1].getName() + ANSI_RESET;
+//        }
 
         str[5][5] = ANSI_BLUE + "분" + ANSI_RESET;
 
