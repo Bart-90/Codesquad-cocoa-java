@@ -1,9 +1,6 @@
 package Day8;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -231,7 +228,7 @@ public class AccountBookFileWrite {
 
         String directory = "c:\\AccountBook\\register.csv";
 
-        BufferedWriter bw = Files.newBufferedWriter(Paths.get(directory), Charset.forName(""), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        BufferedWriter bw = Files.newBufferedWriter(Paths.get(directory), Charset.forName("MS949"), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
         for(int i = 0; i < loginArr.size(); i++){
             bw.write(loginArr.get(i));
